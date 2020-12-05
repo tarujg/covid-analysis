@@ -1,0 +1,5 @@
+fbprophet
+matplotlib
+notebook
+numpy
+pandas
