@@ -9,6 +9,7 @@ try:
         num2date,
         AutoDateLocator,
         AutoDateFormatter,
+        DateFormatter
     )
     from matplotlib.ticker import FuncFormatter
 
@@ -48,7 +49,7 @@ def make_prophet(s, prior=0.5):
 
 def pf_custom_plot(
     m, fcst, ax=None, uncertainty=True, plot_cap=True, xlabel='ds', ylabel='y',
-    figsize=(10, 6)
+    figsize=(10, 6), custom_date_formatter=None
 ):
     """Plot the Prophet forecast with more customizations
     Parameters
@@ -73,20 +74,25 @@ def pf_custom_plot(
     else:
         fig = ax.get_figure()
     fcst_t = fcst['ds'].dt.to_pydatetime()
-    ax.plot(m.history['ds'].dt.to_pydatetime(), m.history['y'], 'k.', alpha=0.25)
-    ax.plot(fcst_t, fcst['yhat'], ls='-', c='#0072B2')
+    ax.plot(
+        m.history['ds'].dt.to_pydatetime(), m.history['y'],
+        'k.', alpha=0.25, label='Actual Value'
+    )
+    ax.plot(fcst_t, fcst['yhat'], ls='-', c='#0072B2', alpha=0.8, label='Predicted')
     if 'cap' in fcst and plot_cap:
         ax.plot(fcst_t, fcst['cap'], ls='--', c='k')
     if m.logistic_floor and 'floor' in fcst and plot_cap:
         ax.plot(fcst_t, fcst['floor'], ls='--', c='k')
     if uncertainty and m.uncertainty_samples:
         ax.fill_between(fcst_t, fcst['yhat_lower'], fcst['yhat_upper'],
-                        color='#0072B2', alpha=0.2)
+                        color='#0072B2', alpha=0.2, label='Uncertainty Interval')
     # Specify formatting to workaround matplotlib issue #12925
     locator = AutoDateLocator(interval_multiples=False)
     formatter = AutoDateFormatter(locator)
     ax.xaxis.set_major_locator(locator)
     ax.xaxis.set_major_formatter(formatter)
+    if custom_date_formatter:
+        ax.xaxis.set_major_formatter(custom_date_formatter)
     # ax.grid(True, which='major', c='gray', ls='-', lw=1, alpha=0.2)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -117,7 +123,7 @@ def add_changepoints_to_plot(
     """
     artists = []
     if trend:
-        artists.append(ax.plot(fcst['ds'], fcst['trend'], c=cp_color))
+        artists.append(ax.plot(fcst['ds'], fcst['trend'], c=cp_color, label='Trend Line'))
     signif_changepoints = m.changepoints[
         np.abs(np.nanmean(m.params['delta'], axis=0)) >= threshold
     ] if len(m.changepoints) > 0 else []
@@ -133,11 +139,13 @@ def make_figure_overall(econ_df):
 
     fig = pf_custom_plot(
         model, forecasts, uncertainty=True,
-        xlabel='Time (Week)', ylabel='Number of Accounts Opened',
+        xlabel='', ylabel='Number of Accounts Opened',
         figsize=(8, 5)
     )
-    add_changepoints_to_plot(fig.gca(), model, forecasts, cp_color='darkred', cp_vlines=False)
-    plt.title('Number of Business Accounts Opened by Week Since 2008', {'fontsize': 14})
+    add_changepoints_to_plot(fig.gca(), model, forecasts, cp_color='#FB8500', cp_vlines=False)
+    plt.title('Number of Business Accounts Opened by Week Since 2008', {'fontsize': 15})
+    plt.ylabel('Number of Accounts Opened', fontsize=13)
+    fig.gca().legend(bbox_to_anchor=(1.04,0), loc="lower left", prop={'size': 12})
     fig.savefig('figures/econ-1.png', bbox_inches='tight', dpi=200)
 
 
@@ -146,16 +154,21 @@ def make_figure_group(indf, groupname):
 
     fig = pf_custom_plot(
         model, forecasts, uncertainty=True,
-        xlabel='Time (Week)', ylabel='Number of Accounts Opened',
-        figsize=(8, 3)
+        xlabel='', ylabel='Number of Accounts Opened',
+        figsize=(8, 3), custom_date_formatter=DateFormatter('%b-%y')
     )
-    add_changepoints_to_plot(fig.gca(), model, forecasts, cp_color='darkred', cp_vlines=False)
-    plt.title(f'{groupname}', {'fontsize': 14})
+    add_changepoints_to_plot(fig.gca(), model, forecasts, cp_color='#FB8500', cp_vlines=False)
+    plt.title(f'{groupname}', {'fontsize': 15})
+    plt.ylabel('Number of Accounts Opened', fontsize=12)
+    fig.gca().legend(
+        loc='upper center', bbox_to_anchor=(0.5, -0.18),
+        fancybox=True, shadow=True, ncol=4
+    )
     plt.show()
+    fig.savefig(f'figures/econ-{indf.name}.png', bbox_inches='tight', dpi=200)
 
 
-def make_figures():
-    econ_data_fp = 'sd_businesses_active_since08_datasd_v1_original.csv'
+def make_figures(econ_data_fp):
     econ_df = ingest_and_clean(econ_data_fp)
     make_figure_overall(econ_df)
 
