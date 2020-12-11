@@ -216,6 +216,9 @@ def make_figure_group(indf, groupname):
 
 
 def make_figures(econ_data_fp):
+    """
+    Helper function that includes all graphs in notebook
+    """
     econ_df = ingest_and_clean(econ_data_fp)
     make_figure_overall(econ_df)
 
