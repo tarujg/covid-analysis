@@ -2,6 +2,16 @@ import pandas as pd
 from io import StringIO
 
 def ingest_and_clean(raw_fp):
+    '''
+    Parameters
+    ----------
+    raw_fp : string
+        path to tax certification data
+    
+    Returns
+    -------
+    DataFrame od data read from csv
+    '''
     with open(raw_fp) as f:
         raw_str = f.read()
 
@@ -25,6 +35,16 @@ def ingest_and_clean(raw_fp):
     return df
 
 def verify_good_data(df):
+    '''
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame of good data
+    
+    Returns
+    -------
+    Nothing is everything is good; otherwise it raises an error
+    '''
     try:
         pd.to_datetime(df['date_account_creation'])
         pd.to_datetime(df['date_business_start'])
@@ -33,5 +53,20 @@ def verify_good_data(df):
         raise e
 
 def aggregate_on(df, column, period='W'):
-    """Return a numerial time pd.Series with freq=period based on counts"""
+    """
+    Return a numerial time pd.Series with freq=period based on counts
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame of good data
+    column : str
+        column name to aggregate on
+    period : str
+        time period code name
+    
+    Returns
+    -------
+    A pd.Series time series with DateTime index
+    """
     return df.resample(period, on=column).size()

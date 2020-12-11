@@ -20,12 +20,38 @@ except ImportError:
 
 
 def prepare_ts(s):
+    """
+    Prepare a pd.Series to have index name 'ds' and name 'y' for fbprophet
+
+    Parameters
+    ----------
+    s : pd.Series
+        A datetime indexed pd.Series
+    
+    Returns
+    -------
+    Same series with name and index name changed
+    """
     s = s.rename_axis('ds')
     out = s.rename('y').reset_index()
     return out
 
 
 def make_prophet(s, prior=0.5):
+    """
+    Make a Prophet object and initialize the analysis
+
+    Parameters
+    ----------
+    s : pd.Series
+        A datetime indexed pd.Series
+    prior : float
+        The scale given to prior trend
+    
+    Returns
+    -------
+    A prophet model object and the forecast time series
+    """
     if 'W' in s.index.freq.name:
         weekly_seasonality=False
         daily_seasonality=False
@@ -51,7 +77,9 @@ def pf_custom_plot(
     m, fcst, ax=None, uncertainty=True, plot_cap=True, xlabel='ds', ylabel='y',
     figsize=(10, 6), custom_date_formatter=None
 ):
-    """Plot the Prophet forecast with more customizations
+    """
+    Plot the Prophet forecast with more customizations
+
     Parameters
     ----------
     m: Prophet model.
@@ -64,6 +92,7 @@ def pf_custom_plot(
     xlabel: Optional label name on X-axis
     ylabel: Optional label name on Y-axis
     figsize: Optional tuple width, height in inches.
+
     Returns
     -------
     A matplotlib figure.
@@ -134,6 +163,14 @@ def add_changepoints_to_plot(
 
 
 def make_figure_overall(econ_df):
+    """
+    Plot the first analysis graph with all data
+
+    Parameters
+    ----------
+    econ_df : pd.DataFrame
+        DataFrame of good data
+    """
     ts = aggregate_on(econ_df, 'date_account_creation', period='W')
     model, forecasts = make_prophet(ts)
 
@@ -150,6 +187,16 @@ def make_figure_overall(econ_df):
 
 
 def make_figure_group(indf, groupname):
+    """
+    Plot the rest analysis graphs with group data
+
+    Parameters
+    ----------
+    econ_df : pd.DataFrame
+        DataFrame of good data
+    groupname : str
+        Name of group to graph
+    """
     model, forecasts = make_prophet(indf, prior=0.8)
 
     fig = pf_custom_plot(
