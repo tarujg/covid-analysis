@@ -54,3 +54,32 @@ def get_avgkwh_per_customer_month(data):
             
     return avgkwh_cm
 
+def make_figure(data19,data20,customer):
+    '''
+    
+
+    Parameters
+    ----------
+    data19 : list
+        2019 electricity consumption across months
+    data20 : list
+        2020 electricity consumption across months
+    customer: string
+        customer class being analysed
+
+    Returns
+    -------
+    None
+
+    '''
+    
+    x = np.arange(12)
+    plt.bar(x-0.4,data19,width=0.4,align='edge',color="#219EBC")
+    
+    x = np.arange(9)
+    plt.bar(x,data20,width=0.4,align='edge',color="#FB8500")
+    
+    plt.title(customer,fontsize=15)
+    plt.xticks(np.arange(12),['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
+    plt.ylabel("Average Power (MWh) ",fontsize=10)
+    plt.legend(['2019','2020'],bbox_to_anchor=(1.05, 1), loc='upper left')
