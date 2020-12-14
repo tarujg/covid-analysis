@@ -31,21 +31,29 @@ It’s clear that the outbreak of COVID-19 changed people’s lives everywhere e
 ## Directory Structure
 ```raw
 ├── README.md
-├── data
-│   └── econ
-│       └── sd_businesses_active_since08_datasd_v1.csv
-├── notebooks
-│   └── econ-plots.ipynb
+└── data
+    └── econ
+        └── sd_businesses_active_since08_datasd_v1.csv
+    └── mobility
+        └── Region_Mobility_Report_CSVs
+    
+└── notebooks
+    └── plots.ipynb
 └── src
+    └── accidents # modules for traffic-data analysis
+        ├── accidents_data.py
+        └── accidents_graph.py
     └── air_quality  # modules for air quality analysis
         ├── air_quality_analysis.py
         └── air_quality_graph.py
     └── econ         # modules for economy analysis
         ├── data.py
         └── fbpf.py
+    └── mobility     # modules for mobility analysis
+    │   └── data.py
     └── sdge         # modules for energy usage analysis
-        ├── data.py
-        
+        └── data.py
+
 ```
 ## External Libraries
 ```raw
