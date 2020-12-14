@@ -86,8 +86,18 @@ def compute_features(df):
     return df
 
 def RushHour(isRushHour, labels = ["Low Traffic", "Normal Traffic", "Rush Hour"]):
-    """
-    """
+    '''
+    Parameters
+    ----------
+    isRushHour: dict
+        Mapping of hour of the day to level of rush
+    labels: list
+        String mapping to level of rush
+
+    Returns
+    -------
+    Maps level of rush (i) to label[i]
+    '''
     assert isinstance(isRushHour,dict), "Rush Hour is a dictionary"
     assert all(0 <= v <= len(labels) for v in isRushHour.values()),"Rush Hour Dictionary has less labels"
     for k,v in list(isRushHour.items()):
