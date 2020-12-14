@@ -50,7 +50,7 @@ It’s clear that the outbreak of COVID-19 changed people’s lives everywhere e
         ├── data.py
         └── fbpf.py
     └── mobility     # modules for mobility analysis
-    │   └── data.py
+        └── data.py
     └── sdge         # modules for energy usage analysis
         └── data.py
 
