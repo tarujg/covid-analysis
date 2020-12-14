@@ -72,4 +72,3 @@ def make_figure(df, cols=['transit','residential','workplaces','grocery'],
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     plt.legend(cols,loc='lower left', bbox_to_anchor=(1, 0.5))
-    #plt.show()
