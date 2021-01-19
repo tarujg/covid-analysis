@@ -1,4 +1,3 @@
-# ECE143 Project - Group 5
 # Life in a pandemic - what has changed in San Diego
 
 ## How to run
